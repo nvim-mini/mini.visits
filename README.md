@@ -1,8 +1,8 @@
-<div align="center"> <img src="https://github.com/nvim-mini/assets/blob/main/logo-2/logo-visits_readme.png" alt="mini.visits"/> </div>
+<p align="center"> <img src="https://github.com/nvim-mini/assets/blob/main/logo-2/logo-visits_readme.png?raw=true" alt="mini.visits" style="max-width:100%;border:solid 2px"/> </p>
 
 ### Track and reuse file system visits
 
-See more details in [Features](#features) and [help file](doc/mini-visits.txt).
+See more details in [Features](#features) and [Documentation](doc/mini-visits.txt).
 
 ---
 
@@ -21,6 +21,7 @@ If you want to help this project grow but don't know where to start, check out [
 
 ## Demo
 
+<!-- Demo source: https://github.com/nvim-mini/assets/blob/main/demo/demo-visits.mp4 -->
 https://github.com/nvim-mini/mini.nvim/assets/24854248/ad8ff054-9b95-4e9c-84b1-b39ddba9d7d3
 
 **Note**: This demo uses custom `vim.ui.select()` from [mini.pick](https://github.com/nvim-mini/mini.nvim/blob/main/readmes/mini-pick.md).
@@ -29,24 +30,25 @@ https://github.com/nvim-mini/mini.nvim/assets/24854248/ad8ff054-9b95-4e9c-84b1-b
 
 - Persistently track file system visits (both files and directories) per project directory. Store visit index is human readable and editable.
 
-- Visit index is normalized on every write to contain relevant information. Exact details can be customized. See `*MiniVisits.normalize()*`.
+- Visit index is normalized on every write to contain relevant information. Exact details can be customized. See `:h MiniVisits.normalize()`.
 
-- Built-in ability to persistently use label paths for later use. See `*MiniVisits.add_label()*` and `*MiniVisits.remove_label()*`.
+- Built-in ability to persistently use label paths for later use. See `:h MiniVisits.add_label()` and `:h MiniVisits.remove_label()`.
 
 - Exported functions to reuse visit data:
     - List visited paths/labels with custom filter and sort (uses "robust frecency" by default). Can be used as source for pickers.
 
-      See `*MiniVisits.list_paths()*` and `*MiniVisits.list_labels()*`. See `*MiniVisits.gen_filter*` and `*MiniVisits.gen_sort*`.
+      See `:h MiniVisits.list_paths()` and `:h MiniVisits.list_labels()`. See `:h MiniVisits.gen_filter` and `:h MiniVisits.gen_sort`.
 
     - Select visited paths/labels using `vim.ui.select()`.
 
-      See `*MiniVisits.select_path()*` and `*MiniVisits.select_label()*`.
+      See `:h MiniVisits.select_path()` and `:h MiniVisits.select_label()`.
 
-    - Iterate through visit paths in target direction ("forward", "backward", "first", "last"). See `*MiniVisits.iterate_paths()*`.
+    - Iterate through visit paths in target direction ("forward", "backward", "first", "last"). See `:h MiniVisits.iterate_paths()`.
 
 - Exported functions to manually update visit index allowing persistent track of any user information. See `*_index()` functions.
 
 Notes:
+
 - All data is stored _only_ in in-session Lua variable (for quick operation) and at `config.store.path` on disk (for persistent usage).
 
 - It doesn't account for paths being renamed or moved (because there is no general way to detect that). Usually a manual intervention to the visit index is required after the change but _before_ the next writing to disk (usually before closing current session) because it will treat previous path as deleted and remove it from index.
@@ -54,11 +56,11 @@ Notes:
     There is a `MiniVisits.rename_in_index()` helper for that.
     If rename/move is done with ['mini.files'](https://github.com/nvim-mini/mini.nvim/blob/main/readmes/mini-files.md), index is autoupdated.
 
-For more information, see these tags in help file:
+For more information see these parts of help:
 
-- `*MiniVisits-overview*`
-- `*MiniVisits-index-specification*`
-- `*MiniVisits-examples*`
+- `:h MiniVisits-overview`
+- `:h MiniVisits-index-specification`
+- `:h MiniVisits-examples`
 
 ## Overview
 
@@ -74,9 +76,10 @@ File system visits (both directory and files) tracking is done in two steps:
     - Visit path does not equal to the latest tracked one.
 
 Visit is autoregistered for current directory and leads to increase of count
-and latest time of visit. See `*MiniVisits-index-specification*` help tag for more details.
+and latest time of visit. See `:h MiniVisits-index-specification` for more details.
 
 Notes:
+
 - All data is stored _only_ in in-session Lua variable (for quick operation) and in one place on disk (for persistent usage). It is automatically written to disk before every Neovim exit.
 
 - Tracking can be disabled by supplying empty string as `track.event`. Then it is up to the user to properly call `MiniVisits.register_visit()`.
@@ -95,12 +98,12 @@ Visit data can be reused in at least these ways:
 
     Labels can be used to manually create groups of files and/or directories that have particular interest to the user.
 
-    There is no one right way to use them, though. See `*MiniVisits-examples*` help tag for some inspiration.
+    There is no one right way to use them, though. See `:h MiniVisits-examples` for some inspiration.
 
 - Utilizing custom data. Visit index can be manipulated manually using
   `_index()` set of functions. All "storable" user data inside index is then stored on disk, so it can be used to create any kind of workflow user wants.
 
-See `*MiniVisits-examples*` help tag for some actual configuration and workflow examples.
+See `:h MiniVisits-examples` for some actual configuration and workflow examples.
 
 ## Installation
 
@@ -115,85 +118,67 @@ Here are code snippets for some common installation methods (use only one):
 
 <details>
 <summary>With <a href="https://github.com/nvim-mini/mini.nvim/blob/main/readmes/mini-deps.md">mini.deps</a></summary>
-<table>
-    <thead>
-        <tr>
-            <th>Github repo</th> <th>Branch</th> <th>Code snippet</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td rowspan=2>'mini.nvim' library</td> <td>Main</td> <td rowspan=2><i>Follow recommended 'mini.deps' installation</i></td>
-        </tr>
-        <tr>
-            <td>Stable</td>
-        </tr>
-        <tr>
-            <td rowspan=2>Standalone plugin</td> <td>Main</td> <td><code>add('nvim-mini/mini.visits')</code></td>
-        </tr>
-        <tr>
-            <td>Stable</td> <td><code>add({ source = 'nvim-mini/mini.visits', checkout = 'stable' })</code></td>
-        </tr>
-    </tbody>
-</table>
+
+- 'mini.nvim' library:
+
+    | Branch | Code snippet                                  |
+    |--------|-----------------------------------------------|
+    | Main   | *Follow recommended ‘mini.deps’ installation* |
+    | Stable | *Follow recommended ‘mini.deps’ installation* |
+
+- Standalone plugin:
+
+    | Branch | Code snippet                                                     |
+    |--------|------------------------------------------------------------------|
+    | Main   | `add(‘nvim-mini/mini.visits’)`                                   |
+    | Stable | `add({ source = ‘nvim-mini/mini.visits’, checkout = ‘stable’ })` |
+
 </details>
 
 <details>
 <summary>With <a href="https://github.com/folke/lazy.nvim">folke/lazy.nvim</a></summary>
-<table>
-    <thead>
-        <tr>
-            <th>Github repo</th> <th>Branch</th> <th>Code snippet</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td rowspan=2>'mini.nvim' library</td> <td>Main</td> <td><code>{ 'nvim-mini/mini.nvim', version = false },</code></td>
-        </tr>
-        <tr>
-            <td>Stable</td> <td><code>{ 'nvim-mini/mini.nvim', version = '*' },</code></td>
-        </tr>
-        <tr>
-            <td rowspan=2>Standalone plugin</td> <td>Main</td> <td><code>{ 'nvim-mini/mini.visits', version = false },</code></td>
-        </tr>
-        <tr>
-            <td>Stable</td> <td><code>{ 'nvim-mini/mini.visits', version = '*' },</code></td>
-        </tr>
-    </tbody>
-</table>
+
+- 'mini.nvim' library:
+
+    | Branch | Code snippet                                  |
+    |--------|-----------------------------------------------|
+    | Main   | `{ 'nvim-mini/mini.nvim', version = false },` |
+    | Stable | `{ 'nvim-mini/mini.nvim', version = '*' },`   |
+
+- Standalone plugin:
+
+    | Branch | Code snippet                                    |
+    |--------|-------------------------------------------------|
+    | Main   | `{ 'nvim-mini/mini.visits', version = false },` |
+    | Stable | `{ 'nvim-mini/mini.visits', version = '*' },`   |
+
 </details>
 
 <details>
 <summary>With <a href="https://github.com/junegunn/vim-plug">junegunn/vim-plug</a></summary>
-<table>
-    <thead>
-        <tr>
-            <th>Github repo</th> <th>Branch</th> <th>Code snippet</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td rowspan=2>'mini.nvim' library</td> <td>Main</td> <td><code>Plug 'nvim-mini/mini.nvim'</code></td>
-        </tr>
-        <tr>
-            <td>Stable</td> <td><code>Plug 'nvim-mini/mini.nvim', { 'branch': 'stable' }</code></td>
-        </tr>
-        <tr>
-            <td rowspan=2>Standalone plugin</td> <td>Main</td> <td><code>Plug 'nvim-mini/mini.visits'</code></td>
-        </tr>
-        <tr>
-            <td>Stable</td> <td><code>Plug 'nvim-mini/mini.visits', { 'branch': 'stable' }</code></td>
-        </tr>
-    </tbody>
-</table>
-</details>
 
-<br>
+- 'mini.nvim' library:
+
+    | Branch | Code snippet                                         |
+    |--------|------------------------------------------------------|
+    | Main   | `Plug 'nvim-mini/mini.nvim'`                         |
+    | Stable | `Plug 'nvim-mini/mini.nvim', { 'branch': 'stable' }` |
+
+- Standalone plugin:
+
+    | Branch | Code snippet                                           |
+    |--------|--------------------------------------------------------|
+    | Main   | `Plug 'nvim-mini/mini.visits'`                         |
+    | Stable | `Plug 'nvim-mini/mini.visits', { 'branch': 'stable' }` |
+
+</details>
 
 **Important**: don't forget to call `require('mini.visits').setup()` to enable its functionality.
 
 **Note**: if you are on Windows, there might be problems with too long file paths (like `error: unable to create file <some file name>: Filename too long`). Try doing one of the following:
+
 - Enable corresponding git global config value: `git config --system core.longpaths true`. Then try to reinstall.
+- Install plugin in other place with shorter path.
 
 ## Default config
 
