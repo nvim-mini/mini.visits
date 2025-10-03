@@ -1,17 +1,14 @@
 --- *mini.visits* Track and reuse file system visits
---- *MiniVisits*
 ---
 --- MIT License Copyright (c) 2023 Evgeni Chasnovski
----
---- ==============================================================================
----
+
 --- Features:
 ---
 --- - Persistently track file system visits (both files and directories)
 ---   per project directory. Store visit index is human readable and editable.
 ---
 --- - Visit index is normalized on every write to contain relevant information.
----   Exact details can be customized. See |MiniVisits.normalize()|.
+---   Exact details can be customized. See |MiniVisits.normalize_index()|.
 ---
 --- - Built-in ability to persistently add labels to path for later use.
 ---   See |MiniVisits.add_label()| and |MiniVisits.remove_label()|.
@@ -42,7 +39,7 @@
 ---   (usually before closing current session) because it will treat previous
 ---   path as deleted and remove it from index.
 ---   There is a |MiniVisits.rename_in_index()| helper for that.
----   If rename/move is done with |MiniFiles|, index is autoupdated.
+---   If rename/move is done with |mini.files|, index is autoupdated.
 ---
 --- Sources with more details:
 --- - |MiniVisits-overview|
@@ -63,7 +60,7 @@
 ---
 --- # Comparisons ~
 ---
---- - 'nvim-telescope/telescope-frecency.nvim':
+--- - [nvim-telescope/telescope-frecency.nvim](https://github.com/nvim-telescope/telescope-frecency.nvim):
 ---     - It stores array of actual visit timestamps, while this module tracks
 ---       only total number and latest timestamp of visits. This is by design
 ---       as a different trade-off between how much data is being used/stored
@@ -78,7 +75,7 @@
 ---       with |vim.ui.select()|.
 ---     - Does not allow use of custom data (like labels), while this module does.
 ---
---- - 'ThePrimeagen/harpoon':
+--- - [ThePrimeagen/harpoon](https://github.com/ThePrimeagen/harpoon):
 ---     - Has slightly different concept than general labeling, which more
 ---       resembles adding paths to an ordered stack. This module implements
 ---       a more common labeling which does not imply order with ability to
@@ -100,6 +97,7 @@
 --- number of different scenarios and customization intentions, writing exact
 --- rules for disabling module's functionality is left to user. See
 --- |mini.nvim-disabling-recipes| for common recipes.
+---@tag MiniVisits
 
 --- # Tracking visits ~
 ---
@@ -113,7 +111,7 @@
 --- - When delay time passes without any dedicated events being triggered
 ---   (meaning user is "settled" on certain buffer), |MiniVisits.register_visit()|
 ---   is called if all of the following conditions are met:
----     - Module is not disabled (see "Disabling" section in |MiniVisits|).
+---     - Module is not disabled (see "Disabling" section in |mini.visits|).
 ---     - Buffer is normal with non-empty name (used as visit path).
 ---     - Visit path does not equal to the latest tracked one. This is to allow
 ---       temporary enter of non-normal buffers (like help, terminal, etc.)
@@ -212,20 +210,19 @@
 --- # Normalization ~
 ---
 --- To ensure that visit index contains mostly relevant data, it gets normalized:
---- automatically inside |MiniVisits.write_index()| or via |MiniVisits.normalize()|.
+--- automatically inside |MiniVisits.write_index()| or
+--- via |MiniVisits.normalize_index()|.
 ---
 --- What normalization actually does can be configured in `config.store.normalize`.
 ---
 --- See |MiniVisits.gen_normalize.default()| for default normalization approach.
 ---@tag MiniVisits-index-specification
 
---- # Workflow examples ~
----
 --- This module provides a flexible framework for working with file system visits.
 --- Exact choice of how to organize workflow is left to the user.
 --- Here are some examples for inspiration which can be combined together.
 ---
---- ## Use different sorting ~
+--- # Use different sorting ~
 ---
 --- Default sorting in |MiniVisits.gen_sort.default()| allows flexible adjustment
 --- of which feature to prefer more: recency or frequency. Here is an example of
@@ -254,9 +251,9 @@
 ---   map('<Leader>vf', 'Select frequent (all)', true,  0)
 ---   map('<Leader>vF', 'Select frequent (cwd)', false, 0)
 --- <
---- Note: If you have |MiniPick|, consider using |MiniExtra.pickers.visit_paths()|.
+--- Note: If using |mini.pick|, consider |MiniExtra.pickers.visit_paths()|.
 ---
---- ## Use manual labels ~
+--- # Use manual labels ~
 ---
 --- Labels is a powerful tool to create groups of associated paths.
 --- Usual workflow consists of:
@@ -265,7 +262,7 @@
 --- - When need to use labeled groups, call |MiniVisits.select_label()| which
 ---   will then call |MiniVisits.select_path()| to select path among those
 ---   having selected label.
----   Note: If you have |MiniPick|, consider using |MiniExtra.pickers.visit_labels()|.
+---   Note: If using |mini.pick|, consider |MiniExtra.pickers.visit_labels()|.
 ---
 --- To make this workflow smoother, here is an example of keymaps: >lua
 ---
@@ -279,7 +276,7 @@
 ---   map_vis('vl', 'select_label("", "")', 'Select label (all)')
 ---   map_vis('vL', 'select_label()',       'Select label (cwd)')
 --- <
---- ## Use fixed labels ~
+--- # Use fixed labels ~
 ---
 --- During work on every project there is usually a handful of files where core
 --- activity is concentrated. This can be made easier by creating mappings
@@ -312,7 +309,7 @@
 ---   map_iterate_core(']]', 'backward', 'Core label (later)')
 ---   map_iterate_core(']}', 'first',    'Core label (latest)')
 --- <
---- ## Use automated labels ~
+--- # Use automated labels ~
 ---
 --- When using version control system (such as Git), usually there is already
 --- an identifier that groups files you are working with - branch name.
@@ -343,7 +340,7 @@
 ---     as its default.
 ---@alias __visits_sort - <sort> `(function)` - path data sorter. For more information about how
 ---     it is used, see |MiniVisits.config.list|.
----     Default: value of `config.list.sort` or |MiniVisits.gen_filter.sort()|
+---     Default: value of `config.list.sort` or |MiniVisits.gen_sort.default()|
 ---     as its default.
 
 ---@diagnostic disable:undefined-field
@@ -380,12 +377,10 @@ MiniVisits.setup = function(config)
   H.create_autocommands(config)
 end
 
---- Module config
----
---- Default values:
+--- Defaults ~
 ---@eval return MiniDoc.afterlines_to_code(MiniDoc.current.eval_section)
----@text                                                         *MiniVisits.config.list*
---- # List ~
+---@text # List ~
+--- *MiniVisits.config.list*
 ---
 --- `config.list` defines how visit index is converted to a path list by default.
 ---
@@ -721,7 +716,8 @@ end
 --- Uses |vim.ui.select()| with an output of |MiniVisits.list_paths()| and
 --- calls |:edit| on the chosen item.
 ---
---- Note: if you have |MiniPick|, consider using |MiniExtra.pickers.visits()|.
+--- Note: if you have |mini.pick|, consider using |MiniExtra.pickers.visit_labels()|
+--- and |MiniExtra.pickers.visit_paths()|.
 ---
 --- Examples:
 ---
@@ -749,7 +745,7 @@ end
 --- Uses |vim.ui.select()| with an output of |MiniVisits.list_labels()| and
 --- calls |MiniVisits.select_path()| to get target paths with selected label.
 ---
---- Note: if you have |MiniPick|, consider using |MiniExtra.pickers.visit_labels()|.
+--- Note: if you have |mini.pick|, consider using |MiniExtra.pickers.visit_labels()|.
 ---
 --- Examples:
 ---
@@ -919,8 +915,8 @@ end
 ---@param store_path string|nil Path on the disk containing visit index data.
 ---   Default: `config.store.path`.
 ---   Notes:
----     - Can return `nil` if path is empty string or file is not readable.
----     - File is sourced with |dofile()| as a regular Lua file.
+---   - Can return `nil` if path is empty string or file is not readable.
+---   - File is sourced with |dofile()| as a regular Lua file.
 ---
 ---@return table|nil Output of the file source.
 MiniVisits.read_index = function(store_path)
