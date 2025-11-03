@@ -9,22 +9,24 @@ See more details in [Features](#features) and [Documentation](doc/mini-visits.tx
 > [!NOTE]
 > This was previously hosted at a personal `echasnovski` GitHub account. It was transferred to a dedicated organization to improve long term project stability. See more details [here](https://github.com/nvim-mini/mini.nvim/discussions/1970).
 
-⦿ This is a part of [mini.nvim](https://github.com/nvim-mini/mini.nvim) library. Please use [this link](https://github.com/nvim-mini/mini.nvim/blob/main/readmes/mini-visits.md) if you want to mention this module.
+⦿ This is a part of [mini.nvim](https://nvim-mini.org/mini.nvim) library. Please use [this link](https://nvim-mini.org/mini.nvim/readmes/mini-visits) if you want to mention this module.
 
 ⦿ All contributions (issues, pull requests, discussions, etc.) are done inside of 'mini.nvim'.
 
-⦿ See the repository page to learn about common design principles and configuration recipes.
+⦿ See [whole library documentation](https://nvim-mini.org/mini.nvim/doc/mini-nvim) to learn about general design principles, disable/configuration recipes, and more.
+
+⦿ See [MiniMax](https://nvim-mini.org/MiniMax) for a full config example that uses this module.
 
 ---
 
-If you want to help this project grow but don't know where to start, check out [contributing guides of 'mini.nvim'](https://github.com/nvim-mini/mini.nvim/blob/main/CONTRIBUTING.md) or leave a Github star for 'mini.nvim' project and/or any its standalone Git repositories.
+If you want to help this project grow but don't know where to start, check out [contributing guides of 'mini.nvim'](https://nvim-mini.org/mini.nvim/CONTRIBUTING) or leave a Github star for 'mini.nvim' project and/or any its standalone Git repositories.
 
 ## Demo
 
 <!-- Demo source: https://github.com/nvim-mini/assets/blob/main/demo/demo-visits.mp4 -->
 https://github.com/nvim-mini/mini.nvim/assets/24854248/ad8ff054-9b95-4e9c-84b1-b39ddba9d7d3
 
-**Note**: This demo uses custom `vim.ui.select()` from [mini.pick](https://github.com/nvim-mini/mini.nvim/blob/main/readmes/mini-pick.md).
+**Note**: This demo uses custom `vim.ui.select()` from [mini.pick](https://nvim-mini.org/mini.nvim/readmes/mini-pick).
 
 ## Features
 
@@ -54,7 +56,7 @@ Notes:
 - It doesn't account for paths being renamed or moved (because there is no general way to detect that). Usually a manual intervention to the visit index is required after the change but _before_ the next writing to disk (usually before closing current session) because it will treat previous path as deleted and remove it from index.
 
     There is a `MiniVisits.rename_in_index()` helper for that.
-    If rename/move is done with ['mini.files'](https://github.com/nvim-mini/mini.nvim/blob/main/readmes/mini-files.md), index is autoupdated.
+    If rename/move is done with ['mini.files'](https://nvim-mini.org/mini.nvim/readmes/mini-files), index is autoupdated.
 
 For more information see these parts of help:
 
@@ -117,7 +119,7 @@ There are two branches to install from:
 Here are code snippets for some common installation methods (use only one):
 
 <details>
-<summary>With <a href="https://github.com/nvim-mini/mini.nvim/blob/main/readmes/mini-deps.md">mini.deps</a></summary>
+<summary>With <a href="https://nvim-mini.org/mini.nvim/readmes/mini-deps">mini.deps</a></summary>
 
 - 'mini.nvim' library:
 
